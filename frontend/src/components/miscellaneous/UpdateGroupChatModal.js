@@ -33,6 +33,7 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain }) => {
 
   const handleRemove = () => {};
   const handleRename = () => {};
+  const handleSearch = () => {};
 
   return (
     <>
@@ -78,11 +79,19 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain }) => {
                 Update
               </Button>
             </FormControl>
+
+            <FormControl>
+              <Input
+                placeholder="Add User to group"
+                mb={1}
+                onChange={(e) => handleSearch(e.target.value)}
+              />
+            </FormControl>
           </ModalBody>
 
           <ModalFooter>
-            <Button colorScheme="blue" mr={3} onClick={onClose}>
-              Close
+            <Button colorScheme="red" mr={3} onClick={() => handleRemove(user)}>
+              Leave Group
             </Button>
           </ModalFooter>
         </ModalContent>
