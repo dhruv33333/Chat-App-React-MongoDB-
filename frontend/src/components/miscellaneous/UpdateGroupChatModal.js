@@ -34,8 +34,6 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain }) => {
 
   const { selectedChat, setSelectedChat, user } = ChatState();
 
-  const handleRemove = () => {};
-
   const handleRename = async () => {
     if (!groupChatName) {
       return;
@@ -143,7 +141,7 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain }) => {
         },
       };
 
-      const { data } = await axios.post(
+      const { data } = await axios.put(
         "/api/chat/groupadd",
         {
           chatId: selectedChat._id,
@@ -153,6 +151,56 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain }) => {
       );
 
       setSelectedChat(data);
+      setFetchAgain(!fetchAgain);
+      setLoading(false);
+    } catch (error) {
+      toast({
+        title: "Error Occured!",
+        description: error.response.data.message,
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+
+      setLoading(false);
+    }
+  };
+
+  const handleRemove = async (userToRemove) => {
+    if (
+      selectedChat.groupAdmin._id !== user._id &&
+      userToRemove._id !== user._id
+    ) {
+      toast({
+        title: "Only Admins can remove someone",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
+      return;
+    }
+
+    try {
+      setLoading(true);
+      const config = {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      };
+
+      const { data } = await axios.put(
+        "/api/chat/groupremove",
+        {
+          chatId: selectedChat._id,
+          userId: userToRemove._id,
+        },
+        config
+      );
+
+      userToRemove._id === user._id ? setSelectedChat() : setSelectedChat(data);
+
       setFetchAgain(!fetchAgain);
       setLoading(false);
     } catch (error) {
