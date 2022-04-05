@@ -80,6 +80,7 @@ const SideDrawer = () => {
         isClosable: true,
         position: "bottom-left",
       });
+      setLoading(false);
     }
   };
 
