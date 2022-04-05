@@ -32,7 +32,9 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain }) => {
   const { selectedChat, setSelectedChat, user } = ChatState();
 
   const handleRemove = () => {};
-  const handleRename = () => {};
+
+  const handleRename = async () => {};
+
   const handleSearch = () => {};
 
   return (
