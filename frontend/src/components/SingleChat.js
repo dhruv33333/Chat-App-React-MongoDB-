@@ -4,12 +4,11 @@ import {
   FormControl,
   IconButton,
   Input,
-  LinkBox,
   Spinner,
   Text,
   useToast,
 } from "@chakra-ui/react";
-import React, { useState } from "react";
+import React, { useEffect, useState } from "react";
 import { ChatState } from "../Context/ChatProvider";
 import { getSenderFull, getSender } from "../config/ChatLogics";
 import ProfileModal from "./miscellaneous/ProfileModal";
@@ -25,8 +24,8 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
 
   const toast = useToast();
 
-  const fetchMessages = async() => {
-    if(!selectedChat) return;
+  const fetchMessages = async () => {
+    if (!selectedChat) return;
 
     try {
       const config = {
@@ -35,11 +34,32 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
         },
       };
 
-      const {data} = await 
+      setLoading(true);
+
+      const { data } = await axios.get(
+        `/api/message/${selectedChat._id}`,
+        config
+      );
+
+      setMessages(data);
+      console.log(messages);
+
+      setLoading(false);
     } catch (error) {
-      
+      toast({
+        title: "Error Occured!",
+        description: "Failed to load the messages",
+        status: "error",
+        duration: 5000,
+        isClosable: true,
+        position: "bottom",
+      });
     }
-  }
+  };
+
+  useEffect(() => {
+    fetchMessages();
+  }, [selectedChat]);
 
   const sendMessage = async (event) => {
     if (event.key === "Enter" && newMessage) {
