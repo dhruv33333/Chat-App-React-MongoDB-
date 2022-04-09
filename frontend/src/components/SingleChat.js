@@ -14,6 +14,7 @@ import { getSenderFull, getSender } from "../config/ChatLogics";
 import ProfileModal from "./miscellaneous/ProfileModal";
 import UpdateGroupChatModal from "./miscellaneous/UpdateGroupChatModal";
 import axios from "axios";
+import ScrollableChat from "./ScrollableChat";
 
 const SingleChat = ({ fetchAgain, setFetchAgain }) => {
   const [messages, setMessages] = useState([]);
@@ -136,6 +137,7 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
                 <UpdateGroupChatModal
                   fetchAgain={fetchAgain}
                   setFetchAgain={setFetchAgain}
+                  fetchMessages={fetchMessages}
                 />
               </>
             )}
@@ -154,7 +156,17 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
             {loading ? (
               <Spinner size="xl" w={20} h={20} margin="auto" />
             ) : (
-              <div>Messages</div>
+              <Box
+                flexDir="column"
+                overflowY="scroll"
+                css={{
+                  "&::-webkit-scrollbar": {
+                    width: "0px",
+                  },
+                }}
+              >
+                <ScrollableChat messages={messages} />
+              </Box>
             )}
 
             <FormControl onKeyDown={sendMessage} isRequired mt={3}>
