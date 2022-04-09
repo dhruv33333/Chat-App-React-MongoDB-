@@ -1,13 +1,89 @@
 import { ArrowBackIcon } from "@chakra-ui/icons";
-import { Box, IconButton, LinkBox, Text } from "@chakra-ui/react";
-import React from "react";
+import {
+  Box,
+  FormControl,
+  IconButton,
+  Input,
+  LinkBox,
+  Spinner,
+  Text,
+  useToast,
+} from "@chakra-ui/react";
+import React, { useState } from "react";
 import { ChatState } from "../Context/ChatProvider";
 import { getSenderFull, getSender } from "../config/ChatLogics";
 import ProfileModal from "./miscellaneous/ProfileModal";
 import UpdateGroupChatModal from "./miscellaneous/UpdateGroupChatModal";
+import axios from "axios";
 
 const SingleChat = ({ fetchAgain, setFetchAgain }) => {
+  const [messages, setMessages] = useState([]);
+  const [loading, setLoading] = useState(false);
+  const [newMessage, setNewMessage] = useState();
+
   const { user, selectedChat, setSelectedChat } = ChatState();
+
+  const toast = useToast();
+
+  const fetchMessages = async() => {
+    if(!selectedChat) return;
+
+    try {
+      const config = {
+        headers: {
+          Authorization: `Bearer ${user.token}`,
+        },
+      };
+
+      const {data} = await 
+    } catch (error) {
+      
+    }
+  }
+
+  const sendMessage = async (event) => {
+    if (event.key === "Enter" && newMessage) {
+      try {
+        const config = {
+          headers: {
+            "Content-type": "application/json",
+            Authorization: `Bearer ${user.token}`,
+          },
+        };
+
+        const newMsg = newMessage;
+        setNewMessage("");
+
+        const { data } = await axios.post(
+          "/api/message",
+          {
+            content: newMsg,
+            chatId: selectedChat._id,
+          },
+          config
+        );
+
+        console.log(data);
+
+        setMessages([...messages, data]);
+      } catch (error) {
+        toast({
+          title: "Error Occured!",
+          description: "Failed to send the message",
+          status: "error",
+          duration: 5000,
+          isClosable: true,
+          position: "bottom",
+        });
+      }
+    }
+  };
+
+  const typingHandler = (e) => {
+    setNewMessage(e.target.value);
+
+    // TODO typing indicater
+  };
 
   return (
     <>
@@ -55,7 +131,21 @@ const SingleChat = ({ fetchAgain, setFetchAgain }) => {
             borderRadius="lg"
             overflowY="hidden"
           >
-            {/* Messages here */}
+            {loading ? (
+              <Spinner size="xl" w={20} h={20} margin="auto" />
+            ) : (
+              <div>Messages</div>
+            )}
+
+            <FormControl onKeyDown={sendMessage} isRequired mt={3}>
+              <Input
+                variant="outline"
+                bg="white"
+                placeholder="Enter a message"
+                onChange={typingHandler}
+                value={newMessage}
+              />
+            </FormControl>
           </Box>
         </>
       ) : (
