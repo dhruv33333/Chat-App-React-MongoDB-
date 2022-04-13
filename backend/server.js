@@ -42,6 +42,7 @@ const io = require("socket.io")(server, {
   },
 });
 
+//this will run whenever someone opens the frontend page
 io.on("connection", (socket) => {
   console.log("connected to socket.io");
 
@@ -57,6 +58,14 @@ io.on("connection", (socket) => {
     console.log("User joined the room: " + room);
   });
 
+  socket.on("typing", (room) => {
+    socket.in(room).emit("typing");
+  });
+
+  socket.on("stop typing", (room) => {
+    socket.in(room).emit("stop typing");
+  });
+
   socket.on("new message", (newMessageReceived) => {
     var chat = newMessageReceived.chat;
 
@@ -64,7 +73,7 @@ io.on("connection", (socket) => {
 
     chat.users.forEach((user) => {
       if (user._id == newMessageReceived.sender._id) return;
-      //in means inside that users room emit/send the msg
+      //in means inside that users room emit/send the msg (we can also use "to" insead of "in")
       socket.in(user._id).emit("message received", newMessageReceived);
     });
   });
