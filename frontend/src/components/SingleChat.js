@@ -19,7 +19,7 @@ import ScrollableChat from "./ScrollableChat";
 import Lottie from "react-lottie";
 import io from "socket.io-client";
 
-const ENDPOINT = "http://localhost:8000";
+const ENDPOINT = "https://mern-chat-io.herokuapp.com/";
 var socket, selectedChatCompare;
 
 const SingleChat = ({ fetchAgain, setFetchAgain }) => {
