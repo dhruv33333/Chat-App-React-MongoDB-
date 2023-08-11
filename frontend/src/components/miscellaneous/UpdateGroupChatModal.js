@@ -216,6 +216,7 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
       setLoading(false);
     }
   };
+  const groupAdminId = selectedChat?.groupAdmin?._id;
 
   return (
     <>
@@ -240,6 +241,7 @@ const UpdateGroupChatModal = ({ fetchAgain, setFetchAgain, fetchMessages }) => {
                   key={user._id}
                   user={user}
                   handleFunction={() => handleRemove(user)}
+                  {...(user?._id === groupAdminId && { tagName: "Admin" })}
                 />
               ))}
             </Box>
