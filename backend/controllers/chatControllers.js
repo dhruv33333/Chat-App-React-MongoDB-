@@ -145,6 +145,13 @@ const addToGroup = asyncHandler(async (req, res) => {
 const removeFromGroup = asyncHandler(async (req, res) => {
   const { chatId, userId } = req.body;
 
+  const chat = await Chat.findOne({ _id: chatId }).populate("groupAdmin");
+
+  if (chat.groupAdmin._id.toString() === userId && chat?.users?.length > 1) {
+    res.status(400);
+    throw new Error("Admin can't leave the group when there are other people!");
+  }
+
   const removed = await Chat.findByIdAndUpdate(
     chatId,
     {
